@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerable Page</title>
+    <style>
+        /* CSS with duplicate properties and poor practices */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            background-color: #fff; /* Duplicate property */
+        }
+        .hidden {
+            display: none;
+        }
+        .input {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Vulnerable App</h1>
+    <p id="message"></p>
+    <form id="loginForm" action="http://example.com/login">
+        <label for="username">Username:</label>
+        <input type="text" id="username" class="input">
+        <br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" class="input">
+        <br><br>
+        <button type="submit" onclick="login()">Login</button>
+    </form>
+    <script>
+        // Global variable (Bad practice)
+        var apiToken = "123456";
+
+        // Hardcoded sensitive data
+        var password = "admin123";
+
+        // Inline script vulnerable to injection
+        document.getElementById('message').innerHTML = "Hello, <script>alert('Injected!');</script>";
+
+        function login() {
+            // Insecure use of innerHTML
+            var userInput = document.getElementById('username').value;
+            document.getElementById('message').innerHTML = "Welcome, " + userInput;
+
+            // Insecure API call (no validation or sanitization)
+            fetch("http://example.com/api?token=" + apiToken)
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(err => console.error(err));
+
+            // Unused variable (code smell)
+            let unusedVar = "This is not used anywhere";
+        }
+    </script>
+</body>
+</html>
