@@ -5,56 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vulnerable Page</title>
     <style>
-        /* CSS with duplicate properties and poor practices */
+        /* Poor coding practices */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            background-color: #fff; /* Duplicate property */
-        }
-        .hidden {
-            display: none;
-        }
-        .input {
-            border: 1px solid #ccc;
-            padding: 10px;
+            background: #eee;
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to the Vulnerable App</h1>
-    <p id="message"></p>
-    <form id="loginForm" action="http://example.com/login">
+    <h1>Vulnerable App</h1>
+    <p id="welcomeMessage"></p>
+
+    <form id="loginForm">
         <label for="username">Username:</label>
-        <input type="text" id="username" class="input">
+        <input type="text" id="username">
         <br><br>
         <label for="password">Password:</label>
-        <input type="password" id="password" class="input">
+        <input type="password" id="password">
         <br><br>
-        <button type="submit" onclick="login()">Login</button>
+        <button type="button" onclick="handleLogin()">Login</button>
     </form>
+
     <script>
-        // Global variable (Bad practice)
-        var apiToken = "123456";
+        // TODO: Remove hardcoded credentials before production!
+        const hardcodedPassword = "password123"; // Security vulnerability
+        const hardcodedToken = "secret-token"; // Expose sensitive data
 
-        // Hardcoded sensitive data
-        var password = "admin123";
+        // Deprecated API usage (Bad practice)
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://example.com/api?token=" + hardcodedToken, true);
+        xhr.send();
 
-        // Inline script vulnerable to injection
-        document.getElementById('message').innerHTML = "Hello, <script>alert('Injected!');</script>";
+        function handleLogin() {
+            const username = document.getElementById("username").value;
 
-        function login() {
-            // Insecure use of innerHTML
-            var userInput = document.getElementById('username').value;
-            document.getElementById('message').innerHTML = "Welcome, " + userInput;
+            // Insecure DOM Manipulation
+            document.getElementById("welcomeMessage").innerHTML = 
+                `<b>Welcome, ${username}</b>`; // Vulnerable to XSS
 
-            // Insecure API call (no validation or sanitization)
-            fetch("http://example.com/api?token=" + apiToken)
-                .then(response => response.json())
-                .then(data => console.log(data))
-                .catch(err => console.error(err));
-
-            // Unused variable (code smell)
-            let unusedVar = "This is not used anywhere";
+            // Unused variable (Code smell)
+            const unusedVariable = "This is never used";
         }
     </script>
 </body>
